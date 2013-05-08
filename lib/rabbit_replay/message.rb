@@ -7,20 +7,10 @@ module RabbitReplay
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    field :app_id
-    field :priority
-    field :type
+    field :properties,        :type => Hash
     field :headers,           :type => Hash
     field :payload
-    field :timestamp
-    field :reply_to
-    field :correlation_id
-    field :message_id
-    field :content_type
-    field :content_encoding
-    field :routing_key
     field :error_details
-    field :queue
     field :last_replay_at,    :type => DateTime
     field :replay_successful, :type => Boolean, :default => false
 
