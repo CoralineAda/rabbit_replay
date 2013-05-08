@@ -12,9 +12,9 @@ Configure RabbitReplay with your app's notifier instance:
 
 Wiring
 ------
-Wrap your publish call following this example:
+Wrap your publish call similar to this example:
 
-    def notify_with_replay(payload, properties={}, headers={})
+    def publish_with_replay(payload, properties={}, headers={})
       begin
         MY_EXCHANGE.publish(payload, :properties => properties.merge(:headers => headers))
       ensure
@@ -27,4 +27,20 @@ Wrap your publish call following this example:
       end
     end
 
+Replaying Errors
+----------------
+Simply:
+
+    RabbitReplay::Message.errors.each{|message| message.replay}
+
+You can replay a message unless and until it is successfully sent. Last replay attempt and status is stored on the message:
+
+    message = RabbitReplay::Message.last
+    message.last_replay_at
+    message.replay_successful?
+
+You can also force a message replay, ignoring replay success:
+
+    message = RabbitReplay::Message.last
+    message.replay!
 
