@@ -6,6 +6,8 @@ Configuration
 -------------
 Configure RabbitReplay with your app's notifier instance:
 
+    # config/rabbit_replay.rb
+
     RabbitReplay.configure do |config|
       config.notifier = MY_EXCHANGE
     end

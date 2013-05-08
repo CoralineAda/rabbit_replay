@@ -45,7 +45,7 @@ module RabbitReplay
     def replay!
       self.replay_successful = true
       begin
-        RabbitReplay::Notifier.publish(self.queue, self.payload, :headers => self.headers)
+        RabbitReplay::Notifier.publish(self.payload, self.properties, self.headers)
       rescue
         self.replay_successful = false
       ensure
