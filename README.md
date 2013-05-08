@@ -7,7 +7,7 @@ Configuration
 Configure RabbitReplay with your app's notifier instance:
 
     RabbitReplay.configure do |config|
-      config.notifier = MY_RABBIT_NOTIFIER
+      config.notifier = MY_EXCHANGE
     end
 
 Wiring
