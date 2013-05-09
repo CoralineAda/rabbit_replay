@@ -7,8 +7,8 @@ module RabbitReplay
     include Mongoid::Document
     include Mongoid::Timestamps
 
-    field :properties,        :type => Hash
-    field :headers,           :type => Hash
+    field :properties,        :type => Hash, :default => {}
+    field :headers,           :type => Hash, :default => {}
     field :payload
     field :error_details
     field :last_replay_at,    :type => DateTime
@@ -25,16 +25,17 @@ module RabbitReplay
       Message.create(params.select{|k,v| fields.keys.include?(k.to_s)})
     end
 
-    def has_payload_or_headers?
-      self.payload.present? || self.headers.present?
-    end
-
     def can_be_replayed?
-      has_payload_or_headers? && ! self.replay_successful
+      return false if self.replay_successful
+      has_payload_or_headers?
     end
 
-    def last_replay_date
-      self.last_replay_at ? self.last_replay_at.to_s(:short_date_time) : "Never"
+    def has_payload_or_headers?
+      ! (self.payload.nil? && self.headers.keys.empty?)
+    end
+
+    def options
+      self.properties.merge(headers: self.headers)
     end
 
     def replay
@@ -45,7 +46,7 @@ module RabbitReplay
     def replay!
       self.replay_successful = true
       begin
-        RabbitReplay::Notifier.publish(self.payload, self.properties, self.headers)
+        RabbitReplay::Notifier.publish(self.payload, options)
       rescue
         self.replay_successful = false
       ensure
